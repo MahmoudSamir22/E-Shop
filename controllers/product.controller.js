@@ -2,16 +2,20 @@ const ProductModel = require("../models/product.model");
 const slugify = require("slugify");
 const asyncHandler = require("express-async-handler");
 const ApiError = require("../utils/apiErrors");
+const ApiFeatures = require("../utils/apiFeatures");
 
 class Product {
   // @desc Get list of Products
   // @route GET /api/v1/products
   // @access Public
   static getProducts = asyncHandler(async (req, res) => {
-    const page = req.query.page * 1 || 1;
-    const limit = req.query.limit * 1 || 5;
-    const skip = (page - 1) * limit;
-    const products = await ProductModel.find({}).skip(skip).limit(limit).populate({path: 'category', select: 'name'});
+    const apiFeatures = new ApiFeatures(ProductModel.find(), req.query)
+      .paginate()
+      .search()
+      .filtering()
+      .limitFields()
+      .sort();
+    const products = await apiFeatures.mongooseQuery;
     res.status(200).json({ result: products.length, data: products });
   });
   // @desc Get Specific prodcut by id
@@ -39,12 +43,10 @@ class Product {
   // @access Private
   static updateProduct = asyncHandler(async (req, res, next) => {
     const { id } = req.params;
-    if(req.body.title) req.body.slug = slugify(req.body.title);
-    const product = await ProductModel.findOneAndUpdate(
-      { _id: id },
-      req.body,
-      { new: true }
-    );
+    if (req.body.title) req.body.slug = slugify(req.body.title);
+    const product = await ProductModel.findOneAndUpdate({ _id: id }, req.body, {
+      new: true,
+    });
     if (!product) {
       return next(new ApiError(`No product found with the id: ${id}`, 404));
     }
