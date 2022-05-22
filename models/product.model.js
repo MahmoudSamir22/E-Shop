@@ -48,26 +48,31 @@ const productSchema = new mongoose.Schema(
       required: [true, "Product must belong to a category"],
     },
     subcategories: [
-        {
-            type: mongoose.Schema.ObjectId,
-            ref: "SubCategory",
-        }
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: "SubCategory",
+      },
     ],
     brand: {
-        type: mongoose.Schema.ObjectId,
-        ref: "Brand",
+      type: mongoose.Schema.ObjectId,
+      ref: "Brand",
     },
     rateingsAverage: {
-        type: Number,
-        min: [1, 'Rating must be above or equal to 1.0'],
-        max: [5, 'Rating must be below or equal to 5.0']
+      type: Number,
+      min: [1, "Rating must be above or equal to 1.0"],
+      max: [5, "Rating must be below or equal to 5.0"],
     },
-    ratingsQuantity:{
-        type: Number,
-        default: 0
-    }
+    ratingsQuantity: {
+      type: Number,
+      default: 0,
+    },
   },
   { timestamps: true }
 );
+
+productSchema.pre(/^find/, function (next) {
+  this.populate({ path: "category", select: "name -_id" });
+  next()
+});
 
 module.exports = mongoose.model("Product", productSchema);

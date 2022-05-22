@@ -9,16 +9,16 @@ const {
 
 const subCategoryRoute = require("./subCategory.routes")
 
-router.use('/:categoriesId/subCategories', subCategoryRoute)
+router.use('/:categoriesId/subcategories', subCategoryRoute)
 
 router
   .route("/")
-  .get(categoryController.getCategory)
+  .get(categoryController.getCategories)
   .post(createCategoryValidator, categoryController.createCategory);
 
 router
   .route("/:id")
-  .get(getCategoryValidator, categoryController.getSingleCategory)
+  .get(getCategoryValidator, categoryController.getCategory)
   .put(updateCategoryValidator, categoryController.updateCategory)
   .delete(deleteCategoryValidator, categoryController.deleteCategory);
 

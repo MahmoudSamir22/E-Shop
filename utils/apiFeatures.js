@@ -17,14 +17,24 @@ class ApiFeatures {
     return this;
   }
 
-  paginate() {
+  paginate(countDocuments) {
     // 2) Pagination
     const page = this.queryString.page * 1 || 1;
     const limit = this.queryString.limit * 1 || 10;
     const skip = (page - 1) * limit;
+    const endIndex = page * limit;
 
+    let pagination = {};
+    pagination.currentPage = page;
+    pagination.limit = limit;
+    pagination.numberOfPages = Math.ceil(countDocuments / limit);
+
+    if (endIndex < countDocuments) pagination.next = page + 1;
+    if (skip > 0) pagination.skip = page - 1;
+
+    this.paginationResult = pagination;
     this.mongooseQuery = this.mongooseQuery.skip(skip).limit(limit);
-    return this
+    return this;
   }
   sort() {
     if (this.queryString.sort) {
@@ -42,18 +52,23 @@ class ApiFeatures {
     } else this.mongooseQuery = this.mongooseQuery.select("-__v");
     return this;
   }
-  search() {
+  search(modelName ) {
     if (this.queryString.keyword) {
       const query = {};
-      query.$or = [
-        { title: { $regex: this.queryString.keyword, $options: "i" } },
-        { description: { $regex: this.queryString.keyword, $options: "i" } },
-      ];
+      if (modelName  === "Products") {
+        query.$or = [
+          { title: { $regex: this.queryString.keyword, $options: "i" } },
+          { description: { $regex: this.queryString.keyword, $options: "i" } },
+        ];
+      } else {
+        query.$or = [{
+          name: { $regex: this.queryString.keyword, $options: "i" },
+        }];
+      }
       this.mongooseQuery = this.mongooseQuery.find(query);
     }
     return this;
   }
-
 }
 
 module.exports = ApiFeatures;
