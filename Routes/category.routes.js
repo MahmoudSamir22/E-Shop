@@ -1,5 +1,12 @@
 const router = require("express").Router();
-const categoryController = require("../controllers/category.controller");
+const {
+  createCategory,
+  getCategory,
+  getCategories,
+  updateCategory,
+  deleteCategory,
+  uploadCategoryImage
+} = require("../controllers/category.controller");
 const {
   getCategoryValidator,
   createCategoryValidator,
@@ -7,19 +14,20 @@ const {
   deleteCategoryValidator,
 } = require("../utils/validators/categoryValidator");
 
-const subCategoryRoute = require("./subCategory.routes")
 
-router.use('/:categoriesId/subcategories', subCategoryRoute)
+const subCategoryRoute = require("./subCategory.routes");
+
+router.use("/:categoriesId/subcategories", subCategoryRoute);
 
 router
   .route("/")
-  .get(categoryController.getCategories)
-  .post(createCategoryValidator, categoryController.createCategory);
+  .get(getCategories)
+  .post(uploadCategoryImage, createCategoryValidator, createCategory);
 
 router
   .route("/:id")
-  .get(getCategoryValidator, categoryController.getCategory)
-  .put(updateCategoryValidator, categoryController.updateCategory)
-  .delete(deleteCategoryValidator, categoryController.deleteCategory);
+  .get(getCategoryValidator, getCategory)
+  .put(updateCategoryValidator, updateCategory)
+  .delete(deleteCategoryValidator, deleteCategory);
 
 module.exports = router;
