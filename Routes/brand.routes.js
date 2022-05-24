@@ -1,5 +1,13 @@
 const router = require("express").Router();
-const brandController = require("../controllers/brand.controller ");
+const {
+  createBrand,
+  getBrands,
+  getBrand,
+  updateBrand,
+  deleteBrand,
+  uploadBrandImage,
+  resizeImage,
+} = require("../controllers/brand.controller ");
 const {
   getBrandValidator,
   createBrandValidator,
@@ -7,16 +15,15 @@ const {
   deleteBrandValidator,
 } = require("../utils/validators/brandValidator");
 
-
 router
   .route("/")
-  .get(brandController.getBrands)
-  .post(createBrandValidator, brandController.createBrand);
+  .get(getBrands)
+  .post(uploadBrandImage, resizeImage, createBrandValidator, createBrand);
 
 router
   .route("/:id")
-  .get(getBrandValidator, brandController.getBrand)
-  .put(updateBrandValidator, brandController.updateBrand)
-  .delete(deleteBrandValidator, brandController.deleteBrand);
+  .get(getBrandValidator, getBrand)
+  .put(uploadBrandImage, resizeImage, updateBrandValidator, updateBrand)
+  .delete(deleteBrandValidator, deleteBrand);
 
 module.exports = router;

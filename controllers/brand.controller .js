@@ -1,27 +1,45 @@
-const BrandModel = require("../models//Brand.model");
-const factory = require('./factoryHandler')
+const { v4: uuidv4 } = require("uuid");
+const sharp = require("sharp");
+const asyncHandler = require("express-async-handler");
 
-class Brand {
-  // @desc Get list of Gategories
-  // @route GET /api/v1/categories
-  // @access Public
-  static getBrands = factory.getAll(BrandModel)
-  // @desc Get Specific brand by id
-  // @route GET api/v1/brands/:id
-  // @access Public
-  static getBrand = factory.getOne(BrandModel)
-  // @desc Create a brand
-  // @route POST /api/v1/brands
-  // @access Private
-  static createBrand = factory.createOne(BrandModel)
-  // @desc Update a Brand
-  // @route PUT /api/v1/brands
-  // @access Private
-  static updateBrand = factory.updateOne(BrandModel)
-  // @desc Delete a Brand
-  // @route DELETE /api/v1/brands
-  // @access Private
-  static deleteBrand = factory.deleteOne(BrandModel)
-}
+const factory = require("./factoryHandler");
+const {uploadSingleImage} = require('../middlewares/uploadImageMiddleware')
+const Brand = require("../models//Brand.model");
 
-module.exports = Brand;
+// Image Proccessing
+exports.resizeImage = asyncHandler(async (req, res, next) => {
+  const fileName = `brand-${uuidv4()}-${Date.now()}.jpeg`;
+  await sharp(req.file.buffer)
+    .resize(600, 600)
+    .toFormat("jpeg")
+    .jpeg({ quality: 90 })
+    .toFile(`uploads/brands/${fileName}`);
+
+  req.body.image = fileName
+
+  next();
+});
+
+// Image Upload
+exports.uploadBrandImage = uploadSingleImage('image')
+
+// @desc Get list of Gategories
+// @route GET /api/v1/categories
+// @access Public
+exports.getBrands = factory.getAll(Brand);
+// @desc Get Specific brand by id
+// @route GET api/v1/brands/:id
+// @access Public
+exports.getBrand = factory.getOne(Brand);
+// @desc Create a brand
+// @route POST /api/v1/brands
+// @access Private
+exports.createBrand = factory.createOne(Brand);
+// @desc Update a Brand
+// @route PUT /api/v1/brands
+// @access Private
+exports.updateBrand = factory.updateOne(Brand);
+// @desc Delete a Brand
+// @route DELETE /api/v1/brands
+// @access Private
+exports.deleteBrand = factory.deleteOne(Brand);

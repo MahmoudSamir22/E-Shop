@@ -1,9 +1,13 @@
+const path = require("path");
+
 const express = require("express");
 require("dotenv").config({ path: "config.env" });
-require("./db/dbConnection");
 const morgan = require("morgan");
+
+require("./db/dbConnection");
 const ApiError = require("./utils/apiErrors");
 const globalError = require("./middlewares/errorMiddleware");
+//Routes
 const categoryRouter = require("./Routes/category.routes");
 const subCategoryRouter = require("./Routes/subCategory.routes");
 const brandRouter = require("./Routes/brand.routes");
@@ -13,6 +17,7 @@ const port = process.env.PORT || 3000;
 
 const app = express();
 app.use(express.json());
+app.use(express.static(path.join(__dirname, 'uploads')))
 
 if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
