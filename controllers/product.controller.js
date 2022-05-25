@@ -3,21 +3,12 @@ const sharp = require("sharp");
 const asyncHandler = require("express-async-handler");
 const multer = require("multer");
 
-const ApiError = require("../utils/apiErrors");
+const {uploadMixOfImages} = require('../middlewares/uploadImageMiddleware')
 const factory = require("./factoryHandler");
 const Product = require("../models/product.model");
 
-const multerStorage = multer.memoryStorage();
 
-const multerFilter = (req, file, cb) => {
-  if (file.mimetype.startsWith("image")) {
-    cb(null, true);
-  } else {
-    cb(new ApiError("Images only supported", 400), false);
-  }
-};
-const upload = multer({ storage: multerStorage, fileFilter: multerFilter });
-exports.uploadProductImages = upload.fields([
+exports.uploadProductImages = uploadMixOfImages([
   { name: "imageCover", maxCount: 1 },
   { name: "images", maxCount: 5 },
 ]);
@@ -27,29 +18,30 @@ exports.uploadProductImages = upload.fields([
 // Image Proccessing
 exports.resizeProductImage = asyncHandler(async (req, res, next) => {
   if (req.files.imageCover) {
-    const imageCoverName = `product-${uuidv4()}-${Date.now()}.jpeg`;
-    await sharp(req.file.buffer)
-      .resize(600, 600)
+    const imageCoverName = `product-cover-${uuidv4()}-${Date.now()}.jpeg`;
+    await sharp(req.files.imageCover[0].buffer)
+      .resize(2000, 1333)
       .toFormat("jpeg")
       .jpeg({ quality: 90 })
       .toFile(`uploads/products/${imageCoverName}`);
 
-    req.body.imagecover = imageCoverName;
+    req.body.imageCover = imageCoverName;
   }
   if (req.files.images) {
-    let images = [];
-    req.files.images.map(async (img, index) => {
-      const imgName = `product-${uuidv4()}-${Date.now()}-${index}.jpeg`;
-      await sharp(img.buffer)
-        .resize(600, 600)
-        .toFormat("jpeg")
-        .jpeg({ quality: 90 })
-        .toFile(`uploads/products/${imgName}`);
+    req.body.images = [];
+    await Promise.all(
+      req.files.images.map(async (img, index) => {
+        const imgName = `product-image-${uuidv4()}-${Date.now()}-${index}.jpeg`;
+        await sharp(img.buffer)
+          .resize(600, 600)
+          .toFormat("jpeg")
+          .jpeg({ quality: 90 })
+          .toFile(`uploads/products/${imgName}`);
 
-      images.push(imgName);
-    });
+        req.body.images.push(imgName);
+      })
+    );
   }
-
   next();
 });
 

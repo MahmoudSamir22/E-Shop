@@ -23,8 +23,8 @@ exports.resizeImage = asyncHandler(async (req, res, next) => {
 // Image Upload
 exports.uploadBrandImage = uploadSingleImage('image')
 
-// @desc Get list of Gategories
-// @route GET /api/v1/categories
+// @desc Get list of brans
+// @route GET /api/v1/brands
 // @access Public
 exports.getBrands = factory.getAll(Brand);
 // @desc Get Specific brand by id

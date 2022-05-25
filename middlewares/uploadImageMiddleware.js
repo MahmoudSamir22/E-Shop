@@ -2,6 +2,20 @@ const multer = require("multer");
 
 const ApiError = require("../utils/apiErrors");
 
+const multerOptions = () => {
+  const multerStorage = multer.memoryStorage();
+
+  const multerFilter = (req, file, cb) => {
+    if (file.mimetype.startsWith("image")) {
+      cb(null, true);
+    } else {
+      cb(new ApiError("Images only supported", 400), false);
+    }
+  };
+  const upload = multer({ storage: multerStorage, fileFilter: multerFilter });
+  return upload
+}
+
 // 1) Disk Storage engine
 // const multerStorage = multer.diskStorage({
 //   destination: function (req, file, cb) {
@@ -14,19 +28,6 @@ const ApiError = require("../utils/apiErrors");
 //   },
 // });
 
-exports.uploadSingleImage = (fieldName) => {
-  // 2) Memory Storage engine
-  const multerStorage = multer.memoryStorage();
+exports.uploadSingleImage = (fieldName) =>  multerOptions().single(fieldName);
 
-  const multerFilter = (req, file, cb) => {
-    if (file.mimetype.startsWith("image")) {
-      cb(null, true);
-    } else {
-      cb(new ApiError("Images only supported", 400), false);
-    }
-  };
-  const upload =  multer({ storage: multerStorage, fileFilter: multerFilter });
-
-  return upload.single(fieldName)
-};
-
+exports.uploadMixOfImages = (arrOfFields) =>  multerOptions().fields(arrOfFields)

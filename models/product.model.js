@@ -75,6 +75,29 @@ productSchema.pre(/^find/, function (next) {
   next()
 });
 
+const setImageURL = (doc) => {
+  if(doc.imageCover){
+    const imageURL = `${process.env.BASE_URL}/products/${doc.imageCover}`
+    doc.imageCover = imageURL
+  }
+  if(doc.images){
+    const imageList = []
+    doc.images.forEach(image => {
+      const imageURL = `${process.env.BASE_URL}/products/${image}`
+      imageList.push(imageURL)
+    })
+    doc.images = imageList
+  }
+}
+
+productSchema.post('init', (doc) => {
+  setImageURL(doc)
+})
+
+productSchema.post('save', (doc) => {
+  setImageURL(doc)
+})
+
 const productModel = mongoose.model("Product", productSchema);
 
 module.exports = productModel
