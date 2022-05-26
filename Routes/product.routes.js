@@ -6,7 +6,7 @@ const {
   updateProduct,
   deleteProduct,
   uploadProductImages,
-  resizeProductImage
+  resizeProductImage,
 } = require("../controllers/product.controller");
 const {
   getProductValidator,
@@ -15,15 +15,29 @@ const {
   deleteProductValidator,
 } = require("../utils/validators/productValidator");
 
+const { auth, allowedTo } = require("../controllers/auth.controller");
+
 router
   .route("/")
   .get(getProducts)
-  .post(uploadProductImages, resizeProductImage, createProductValidator, createProduct);
+  .post(
+    auth,
+    allowedTo("admin", "manager"),
+    uploadProductImages,
+    resizeProductImage,
+    createProductValidator,
+    createProduct
+  );
 
 router
   .route("/:id")
   .get(getProductValidator, getProduct)
-  .put(updateProductValidator, updateProduct)
-  .delete(deleteProductValidator, deleteProduct);
+  .put(
+    auth,
+    allowedTo("admin", "manager"),
+    updateProductValidator,
+    updateProduct
+  )
+  .delete(auth, allowedTo("admin"), deleteProductValidator, deleteProduct);
 
 module.exports = router;

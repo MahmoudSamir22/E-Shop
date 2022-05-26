@@ -27,14 +27,14 @@ const userSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      enum: ["user", "admin"],
+      enum: ["user", "manager", "admin"],
       default: "user",
     },
     active: {
       type: Boolean,
       default: true,
     },
-    passwordChangedAt: Date
+    passwordChangedAt: Date,
   },
   { timestamps: true }
 );

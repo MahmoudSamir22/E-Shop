@@ -54,13 +54,37 @@ exports.auth = asyncHandler(async (req, res, next) => {
     );
   }
   // 4) check if user change his password after token created
-  if(currentUser.passwordChangedAt){
-      const passwordToTimeStamps = parseInt(currentUser.passwordChangedAt / 1000, 10);
-    if(passwordToTimeStamps > decoded.iat){
-        return next(new ApiError('User recentlly changed password please login again'));
+  if (currentUser.passwordChangedAt) {
+    const passwordToTimeStamps = parseInt(
+      currentUser.passwordChangedAt / 1000,
+      10
+    );
+    if (passwordToTimeStamps > decoded.iat) {
+      return next(
+        new ApiError("User recentlly changed password please login again")
+      );
     }
   }
   req.user = currentUser;
-  next()
-
+  next();
 });
+
+exports.allowedTo = (...roles) =>
+  asyncHandler(async (req, res, next) => {
+    if (!roles.includes(req.user.role)) {
+      return next(
+        new ApiError("This user not allowed to user this route", 403)
+      );
+    }
+    next()
+  });
+
+exports.forgetPassword = asyncHandler(async (req, res, next) => {
+  // 1) get user by email
+  const user = await User.findOne({ email: req.body.email})
+  if(!user){
+    return next(new ApiError("No user with this email", 404));
+  }
+  // 2) If user exist , generate 6 random numbers and save it to db 
+  // 3) send the reset code via email
+})

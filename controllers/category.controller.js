@@ -3,26 +3,27 @@ const sharp = require("sharp");
 const asyncHandler = require("express-async-handler");
 
 const factory = require("./factoryHandler");
-const {uploadSingleImage} = require('../middlewares/uploadImageMiddleware')
+const { uploadSingleImage } = require("../middlewares/uploadImageMiddleware");
 const Category = require("../models/category.model");
 
 // Image Proccessing
 exports.resizeImage = asyncHandler(async (req, res, next) => {
-  const fileName = `category-${uuidv4()}-${Date.now()}.jpeg`;
-  // console.log(req.file);
-  await sharp(req.file.buffer)
-    .resize(600, 600)
-    .toFormat("jpeg")
-    .jpeg({ quality: 90 })
-    .toFile(`uploads/categories/${fileName}`);
+  if (req.file) {
+    const fileName = `category-${uuidv4()}-${Date.now()}.jpeg`;
+    await sharp(req.file.buffer)
+      .resize(600, 600)
+      .toFormat("jpeg")
+      .jpeg({ quality: 90 })
+      .toFile(`uploads/categories/${fileName}`);
 
-  req.body.image = fileName
+    req.body.image = fileName;
+  }
 
   next();
 });
 
 // Image Upload
-exports.uploadCategoryImage = uploadSingleImage('image')
+exports.uploadCategoryImage = uploadSingleImage("image");
 
 // @desc Get list of Gategories
 // @route GET /api/v1/categories

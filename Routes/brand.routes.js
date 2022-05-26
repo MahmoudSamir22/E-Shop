@@ -15,15 +15,31 @@ const {
   deleteBrandValidator,
 } = require("../utils/validators/brandValidator");
 
+const { auth, allowedTo } = require("../controllers/auth.controller");
+
 router
   .route("/")
   .get(getBrands)
-  .post(uploadBrandImage, resizeImage, createBrandValidator, createBrand);
+  .post(
+    auth,
+    allowedTo("admin", "manager"),
+    uploadBrandImage,
+    resizeImage,
+    createBrandValidator,
+    createBrand
+  );
 
 router
   .route("/:id")
   .get(getBrandValidator, getBrand)
-  .put(uploadBrandImage, resizeImage, updateBrandValidator, updateBrand)
-  .delete(deleteBrandValidator, deleteBrand);
+  .put(
+    auth,
+    allowedTo("admin", "manager"),
+    uploadBrandImage,
+    resizeImage,
+    updateBrandValidator,
+    updateBrand
+  )
+  .delete(auth, allowedTo("admin"), deleteBrandValidator, deleteBrand);
 
 module.exports = router;
