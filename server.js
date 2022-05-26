@@ -13,6 +13,7 @@ const subCategoryRouter = require("./Routes/subCategory.routes");
 const brandRouter = require("./Routes/brand.routes");
 const productRouter = require("./Routes/product.routes");
 const userRouter = require("./Routes/user.routes");
+const authRouter = require("./Routes/auth.routes");
 
 const port = process.env.PORT || 3000;
 
@@ -28,6 +29,7 @@ app.use("/api/v1/categories", categoryRouter);
 app.use("/api/v1/subcategories", subCategoryRouter);
 app.use("/api/v1/brands", brandRouter);
 app.use('/api/v1/products', productRouter)
+app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/users", userRouter);
 app.all("*", (req, res, next) => {
   next(new ApiError(`Can't find this route ${req.originalUrl}`, 400));

@@ -9,6 +9,7 @@ const Category = require("../models/category.model");
 // Image Proccessing
 exports.resizeImage = asyncHandler(async (req, res, next) => {
   const fileName = `category-${uuidv4()}-${Date.now()}.jpeg`;
+  // console.log(req.file);
   await sharp(req.file.buffer)
     .resize(600, 600)
     .toFormat("jpeg")

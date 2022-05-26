@@ -7,6 +7,7 @@ const {
   deleteUser,
   uploadUserImage,
   resizeImage,
+  changePassword,
 } = require("../controllers/user.controller");
 
 const {
@@ -14,12 +15,15 @@ const {
   getUserValidator,
   updateUserValidator,
   deleteUserValidator,
+  changePasswordValidator,
 } = require("../utils/validators/userValidator");
 
 router
   .route("/")
   .get(getUsers)
   .post(uploadUserImage, resizeImage, createUserValidator, createUser);
+
+router.put('/changePassword/:id', changePasswordValidator ,changePassword)
 
 router
   .route("/:id")
