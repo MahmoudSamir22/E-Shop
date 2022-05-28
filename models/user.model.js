@@ -20,6 +20,9 @@ const userSchema = new mongoose.Schema(
 
     phone: String,
     profileImage: String,
+    passwordResetCode: String,
+    passwordResetExpirs: Date,
+    passwordResetVerified: Boolean,
     password: {
       type: String,
       required: [true, "Password is required"],

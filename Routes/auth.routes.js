@@ -1,20 +1,26 @@
 const router = require("express").Router();
 const {
   signUp,
-  logIn
+  logIn,
+  forgetPassword,
+  verifyResetCode,
+  resetPassword,
 } = require("../controllers/auth.controller");
 
 const {
-  signUpValidator, logInValidator
+  signUpValidator,
+  logInValidator,
 } = require("../utils/validators/authValidator");
 
-router
-  .route("/signUp")
-  .post(signUpValidator, signUp);
+router.post("/signUp", signUpValidator, signUp);
 
-  router
-  .route("/logIn")
-  .post(logInValidator, logIn);
+router.post("/logIn", logInValidator, logIn);
+
+router.post("/forgetPassword", forgetPassword);
+
+router.post("/verifyResetCode", verifyResetCode);
+
+router.put("/resetPassword", resetPassword);
 
 // router
 //   .route("/:id")
