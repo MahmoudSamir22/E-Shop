@@ -15,11 +15,11 @@ const {
 
 const { auth, allowedTo } = require("../controllers/auth.controller");
 
-router.route("/").get(getReviewValidator, getReviews).post(auth, allowedTo("user"), createReviewValidator, createReview);
+router.route("/").get(getReviews).post(auth, allowedTo("user"), createReviewValidator, createReview);
 
 router
   .route("/:id")
-  .get(getReview)
+  .get(getReviewValidator, getReview)
   .put(auth, allowedTo("user"), updateReviewValidator, updateReview)
   .delete(auth, allowedTo("user", "manager", "admin"), deleteReviewValidator, deleteReview);
 
