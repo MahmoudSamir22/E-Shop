@@ -16,6 +16,9 @@ const {
 } = require("../utils/validators/productValidator");
 
 const { auth, allowedTo } = require("../controllers/auth.controller");
+const reviewsRouter = require('./review.routes')
+
+router.use('/:productId/reviews', reviewsRouter)
 
 router
   .route("/")

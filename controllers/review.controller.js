@@ -3,6 +3,19 @@ const asyncHandler = require("express-async-handler");
 const factory = require("./factoryHandler");
 const Review = require("../models/review.model");
 
+exports.createProductIdAndUserId = (req, res, next) => {
+  if (!req.body.product) req.body.product = req.params.productId;
+  if (!req.body.user) req.body.user = req.user._id;
+  next();
+};
+exports.createFilterObject = (req, res, next) => {
+  let filterObject = {};
+  if (req.params.productId) {
+    filterObject = { product: req.params.productId };
+  }
+  req.filter = filterObject;
+  next();
+};
 
 // @desc Get list of reviews
 // @route GET /api/v1/reviews

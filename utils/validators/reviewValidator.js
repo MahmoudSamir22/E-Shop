@@ -4,7 +4,7 @@ const Review = require('../../models/review.model');
 
 exports.createReviewValidator = [
   check('title').optional(),
-  check('ratings')
+  check('rating')
     .notEmpty()
     .withMessage('ratings value required')
     .isFloat({ min: 1, max: 5 })

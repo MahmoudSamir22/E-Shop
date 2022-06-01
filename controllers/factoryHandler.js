@@ -9,6 +9,7 @@ exports.deleteOne = (Model) =>
     if (!document) {
       return next(new ApiError(`No document found with the id: ${id}`, 404));
     }
+    await document.remove();
     res.status(204).json({ date: document });
   });
 
@@ -22,6 +23,7 @@ exports.updateOne = (Model) =>
         new ApiError(`No document found with the id: ${req.params.id}`, 404)
       );
     }
+    await document.save();
     res.status(200).json({ data: document });
   });
 

@@ -38,6 +38,20 @@ const userSchema = new mongoose.Schema(
       default: true,
     },
     passwordChangedAt: Date,
+    wishList: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: "Product",
+      },
+    ],
+    addresses: [{
+      id: {type: mongoose.Schema.ObjectId},
+      alias: String,
+      details: String,
+      city: String,
+      postalCode: String,
+      phone: String,
+    }]
   },
   { timestamps: true }
 );
