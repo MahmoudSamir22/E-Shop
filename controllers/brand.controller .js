@@ -4,7 +4,7 @@ const asyncHandler = require("express-async-handler");
 
 const factory = require("./factoryHandler");
 const {uploadSingleImage} = require('../middlewares/uploadImageMiddleware')
-const Brand = require("../models//Brand.model");
+const Brand = require("../models/Brand.model");
 
 // Image Proccessing
 exports.resizeImage = asyncHandler(async (req, res, next) => {
