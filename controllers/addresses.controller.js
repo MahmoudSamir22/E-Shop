@@ -7,7 +7,7 @@ exports.addAddress = asyncHandler(async (req, res, next) => {
   const user = await User.findByIdAndUpdate(
     req.user._id,
     {
-      $addToSet: { wishList: req.body },
+      $addToSet: { addresses: req.body },
     },
     { new: true }
   );
@@ -22,7 +22,7 @@ exports.removeAddress = asyncHandler(async (req, res, next) => {
   const user = await User.findByIdAndUpdate(
     req.user._id,
     {
-      $pull: { addresses: req.params.addressId },
+      $pull: { addresses: {_id: req.params.addressId} },
     },
     { new: true }
   );

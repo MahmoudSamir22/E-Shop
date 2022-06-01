@@ -16,6 +16,7 @@ const userRouter = require("./Routes/user.routes");
 const authRouter = require("./Routes/auth.routes");
 const reviewRouter = require("./Routes/review.routes");
 const wishListRouter = require ('./Routes/wishList.routes')
+const addressesRouter = require ('./Routes/addresses.routes')
 
 const port = process.env.PORT || 3000;
 
@@ -35,6 +36,7 @@ app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/reviews", reviewRouter);
 app.use("/api/v1/wishList", wishListRouter);
+app.use("/api/v1/addresses", addressesRouter);
 app.all("*", (req, res, next) => {
   next(new ApiError(`Can't find this route ${req.originalUrl}`, 400));
 });
