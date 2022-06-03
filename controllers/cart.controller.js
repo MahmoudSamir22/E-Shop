@@ -3,6 +3,7 @@ const asyncHandler = require("express-async-handler");
 const ApiError = require("../utils/apiErrors");
 const Cart = require("../models/cart.model");
 const Product = require("../models/product.model");
+const Coupon = require("../models/coupon.model");
 
 const calcTotalCartPrice = (cart) => {
   let productTotalPrice = 0;
@@ -10,6 +11,7 @@ const calcTotalCartPrice = (cart) => {
     productTotalPrice += item.price * item.quantity;
   });
   cart.totalCartPrice = productTotalPrice;
+  cart.totlaPriceAfterDiscount = undefined;
   return productTotalPrice;
 };
 
@@ -105,19 +107,51 @@ exports.clearUserCart = asyncHandler(async (req, res, next) => {
 // @access Private/User
 exports.updateCartItmeQuantity = asyncHandler(async (req, res, next) => {
   const { quantity } = req.body;
-  const cart = await Cart.findOne({user: req.user.id})
-  if(!cart){
-    return next(new ApiError('There is no cart for this user',404));
+  const cart = await Cart.findOne({ user: req.user.id });
+  if (!cart) {
+    return next(new ApiError("There is no cart for this user", 404));
   }
-  const itemIndex = cart.cartItems.findIndex(item => item._id.toString() === req.params.id)
-  if(itemIndex > -1){
-    const cartItem = cart.cartItems[itemIndex]
-    cartItem.quantity = quantity
-    cart.cartItems[itemIndex] = cartItem
-  }else {
-    return next(new ApiError(`there is no item for this id: ${req.params.id}`, 404))
+  const itemIndex = cart.cartItems.findIndex(
+    (item) => item._id.toString() === req.params.id
+  );
+  if (itemIndex > -1) {
+    const cartItem = cart.cartItems[itemIndex];
+    cartItem.quantity = quantity;
+    cart.cartItems[itemIndex] = cartItem;
+  } else {
+    return next(
+      new ApiError(`there is no item for this id: ${req.params.id}`, 404)
+    );
   }
   calcTotalCartPrice(cart);
+  await cart.save();
+  res.status(200).json({
+    status: "success",
+    numOfCartItems: cart.cartItems.length,
+    data: cart,
+  });
+});
+
+// @desc Apply coupon on cart
+// @route POST /api/v1/cart/applyCoupon
+// @access Private/User
+
+exports.applyCoupon = asyncHandler(async (req, res, next) => {
+  const coupon = await Coupon.findOne({
+    name: req.body.coupon,
+    expires: { $gte: Date.now() },
+  });
+  if (!coupon) {
+    return next(new ApiError("Coupon Invaled or  expired ", 404));
+  }
+  const cart = await Cart.findOne({ user: req.user._id });
+
+  const totalPrice = cart.totalCartPrice;
+  const priceAfterDiscount = (
+    totalPrice -
+    (totalPrice * coupon.discount) / 100
+  ).toFixed(2);
+  cart.totlaPriceAfterDiscount = priceAfterDiscount;
   await cart.save();
   res.status(200).json({
     status: "success",
