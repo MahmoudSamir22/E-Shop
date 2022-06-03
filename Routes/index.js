@@ -8,6 +8,8 @@ const reviewRouter = require("./review.routes");
 const wishListRouter = require("./wishList.routes");
 const addressesRouter = require("./addresses.routes");
 const couponRouter = require("./coupon.routes");
+const cartRouter = require("./cart.routes");
+
 
 const mountRoutes = (app) => {
   app.use("/api/v1/categories", categoryRouter);
@@ -20,6 +22,7 @@ const mountRoutes = (app) => {
   app.use("/api/v1/wishList", wishListRouter);
   app.use("/api/v1/addresses", addressesRouter);
   app.use("/api/v1/coupons", couponRouter);
+  app.use("/api/v1/cart", cartRouter);
 };
 
 module.exports = mountRoutes
