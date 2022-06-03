@@ -37,21 +37,25 @@ exports.createOne = (Model) =>
 exports.getOne = (Model, popOptions) =>
   asyncHandler(async (req, res, next) => {
     const { id } = req.params;
-    let query = await Model.findById(id);
-    if(popOptions){
-      query = query.populate(popOptions)
+    let filter = {_id: id}
+    if(req.filter){filter = {...filter, ...req.filter}}
+    let query = await Model.findOne(filter);
+    if (popOptions) {
+      query = query.populate(popOptions);
     }
-    const document = await query
+    const document = await query;
     if (!document) {
       return next(new ApiError(`No document found with the id: ${id}`, 404));
     }
-    res.status(200).json({ date: document });
+    res.status(200).json({date: document });
   });
 
-exports.getAll = (Model, modelName = '') =>
+exports.getAll = (Model, modelName = "") =>
   asyncHandler(async (req, res) => {
-    let filter = {}
-    if(req.filter) {filter = req.filter}
+    let filter = {};
+    if (req.filter) {
+      filter = req.filter;
+    }
     const documentsCount = await Model.countDocuments();
     const apiFeatures = new ApiFeatures(Model.find(filter), req.query)
       .paginate(documentsCount)
