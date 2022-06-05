@@ -6,6 +6,7 @@ const {
   findOrder,
   updadeOrderToPaid,
   updadeOrderToDeliverd,
+  checkOutSession
 } = require("../controllers/order.controller");
 
 const { auth, allowedTo } = require("../controllers/auth.controller");
@@ -19,6 +20,8 @@ router
     filterOrderLoggedUser,
     findAllOrders
   );
+
+router.get('/checkout-session/:cartId', allowedTo("user"), checkOutSession)
 
 router
   .route("/:id")

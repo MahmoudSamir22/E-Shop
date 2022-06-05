@@ -1,3 +1,4 @@
+const stripe = require("stripe")(process.env.STRIPE_SECRET);
 const asyncHandler = require("express-async-handler");
 const factory = require("./factoryHandler");
 const ApiError = require("../utils/apiErrors");
@@ -41,38 +42,84 @@ exports.createCashOrder = asyncHandler(async (req, res, next) => {
     }));
     await Product.bulkWrite(bulkOptions, {});
     // 5) Clear card depends on cartId
-    await Cart.findByIdAndDelete(req.params.cartId)
+    await Cart.findByIdAndDelete(req.params.cartId);
   }
-  res.status(201).json({status: 'OK', data: order});
+  res.status(201).json({ status: "OK", data: order });
 });
 
 exports.filterOrderLoggedUser = asyncHandler(async (req, res, next) => {
-  if(req.user.role === 'user') req.filter = { user: req.user._id}
-  next()
-})
+  if (req.user.role === "user") req.filter = { user: req.user._id };
+  next();
+});
 
-exports.findAllOrders = factory.getAll(Order)
+exports.findAllOrders = factory.getAll(Order);
 
-exports.findOrder = factory.getOne(Order)
+exports.findOrder = factory.getOne(Order);
 
 exports.updadeOrderToPaid = asyncHandler(async (req, res, next) => {
-  const order = await Order.findById(req.params.id)
-  if(!order) return next(new ApiError(`There is no such order with id: ${req.params.id}`, 404))
+  const order = await Order.findById(req.params.id);
+  if (!order)
+    return next(
+      new ApiError(`There is no such order with id: ${req.params.id}`, 404)
+    );
 
-  order.isPaied = true
-  order.paidAt = Date.now()
+  order.isPaied = true;
+  order.paidAt = Date.now();
 
-  await order.save()
-  res.status(200).json({status: 'Success', data: order})
-})
+  await order.save();
+  res.status(200).json({ status: "Success", data: order });
+});
 
 exports.updadeOrderToDeliverd = asyncHandler(async (req, res, next) => {
-  const order = await Order.findById(req.params.id)
-  if(!order) return next(new ApiError(`There is no such order with id: ${req.params.id}`, 404))
+  const order = await Order.findById(req.params.id);
+  if (!order)
+    return next(
+      new ApiError(`There is no such order with id: ${req.params.id}`, 404)
+    );
 
-  order.isDelivered = true
-  order.deliveredAt = Date.now()
+  order.isDelivered = true;
+  order.deliveredAt = Date.now();
 
-  await order.save()
-  res.status(200).json({status: 'Success', data: order})
-})
+  await order.save();
+  res.status(200).json({ status: "Success", data: order });
+});
+
+// @desc Get Check out session from stripe and send it as a response
+// @route GET /api/v1/order/checkout-session/cartId
+// @access Private/User
+
+exports.checkOutSession = asyncHandler(async (req, res, next) => {
+  const taxPrice = 0;
+  const shippingPrice = 0;
+  // 1) Get cart depends on cartId
+  const cart = await Cart.findById(req.params.cartId);
+  if (!cart) {
+    return next(
+      new ApiError(`There is no cart with this id: ${req.params.cartId}`, 404)
+    );
+  }
+  // 2) Get order price depends on cart price (check if coupon applied)
+  const orderPrice = cart.totalPriceAfterDiscount
+    ? cart.totalPriceAfterDiscount
+    : cart.totalCartPrice;
+  const totalOrderPrice = orderPrice + taxPrice + shippingPrice;
+
+  const session = await stripe.checkout.sessions.create({
+    line_items: [
+      {
+        name: req.user.name,
+        amount: totalOrderPrice * 100,
+        currency: 'egp',
+        quantity: 1,
+      },
+    ],
+    mode: 'payment',
+    success_url: `${req.protocol}://${req.get('host')}/orders`,
+    cancel_url: `${req.protocol}://${req.get('host')}/cart`,
+    customer_email: req.user.email,
+    client_reference_id: req.params.cartId,
+    metadata: req.body.shippingAddress
+  });
+
+  res.status(200).json({status: 'success', data: session})
+});
