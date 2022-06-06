@@ -3,6 +3,8 @@ const path = require("path");
 const express = require("express");
 require("dotenv").config({ path: "config.env" });
 const morgan = require("morgan");
+const cors = require('cors')
+const compression = require('compression')
 
 require("./db/dbConnection");
 const ApiError = require("./utils/apiErrors");
@@ -12,6 +14,14 @@ const mountRoutes = require('./Routes')
 const port = process.env.PORT || 3000;
 
 const app = express();
+// Enable other domains to access your application
+app.use(cors())
+app.options('*', cors())
+
+// compress all responses
+app.use(compression())
+
+
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'uploads')))
 
