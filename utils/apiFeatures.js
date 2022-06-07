@@ -65,7 +65,7 @@ class ApiFeatures {
           name: { $regex: this.queryString.keyword, $options: "i" },
         }];
       }
-      this.mongooseQuery = this.mongooseQuery.find(query);
+      this.mongooseQuery = this.mongooseQuery.find(query).clone();
     }
     return this;
   }

@@ -73,7 +73,7 @@ exports.allowedTo = (...roles) =>
   asyncHandler(async (req, res, next) => {
     if (!roles.includes(req.user.role)) {
       return next(
-        new ApiError("This user not allowed to user this route", 403)
+        new ApiError("This user not allowed to use this route", 403)
       );
     }
     next();
