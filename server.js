@@ -6,12 +6,14 @@ const morgan = require("morgan");
 const cors = require('cors')
 const compression = require('compression')
 
-require("./db/dbConnection");
+const dbConnection = require("./db/dbConnection");
 const ApiError = require("./utils/apiErrors");
 const globalError = require("./middlewares/errorMiddleware");
 const mountRoutes = require('./Routes')
 
 const port = process.env.PORT || 3000;
+
+dbConnection()
 
 const app = express();
 // Enable other domains to access your application
