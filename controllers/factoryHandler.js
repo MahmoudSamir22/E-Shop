@@ -50,22 +50,22 @@ exports.getOne = (Model, popOptions) =>
     res.status(200).json({date: document });
   });
 
-exports.getAll = (Model, modelName = "") =>
+exports.getAll =  (Model, modelName = "") =>
   asyncHandler(async (req, res) => {
     let filter = {};
     if (req.filter) {
       filter = req.filter;
     }
     const documentsCount = await Model.countDocuments();
-    const apiFeatures = new ApiFeatures(Model.find(filter), req.query)
+    const apiFeatures =  new ApiFeatures(Model.find(filter), req.query)
       .paginate(documentsCount)
-      // .search(modelName)
-      // .filtering()
+      .filtering()
+      .search(modelName)
       .limitFields()
       .sort();
 
     const { mongooseQuery, paginationResult } = apiFeatures;
-    const documents = await mongooseQuery;
+    const documents = await mongooseQuery.clone();
     res
       .status(200)
       .json({ paginationResult, result: documents.length, data: documents });
