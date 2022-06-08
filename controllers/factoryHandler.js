@@ -65,7 +65,7 @@ exports.getAll = (Model, modelName = "") =>
       .sort();
 
     const { mongooseQuery, paginationResult } = apiFeatures;
-    const documents = await mongooseQuery.clone();
+    const documents = await mongooseQuery;
     res
       .status(200)
       .json({ paginationResult, result: documents.length, data: documents });
