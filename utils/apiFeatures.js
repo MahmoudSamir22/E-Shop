@@ -52,20 +52,26 @@ class ApiFeatures {
     } else this.mongooseQuery = this.mongooseQuery.select("-__v");
     return this;
   }
-  search(modelName ) {
+  search(modelName) {
     if (this.queryString.keyword) {
       const query = {};
-      if (modelName  === "Products") {
+      if (modelName === "Products") {
         query.$or = [
           { title: { $regex: this.queryString.keyword, $options: "i" } },
           { description: { $regex: this.queryString.keyword, $options: "i" } },
         ];
       } else {
-        query.$or = [{
-          name: { $regex: this.queryString.keyword, $options: "i" },
-        }];
+        query.$or = [
+          {
+            name: { $regex: this.queryString.keyword, $options: "i" },
+          },
+        ];
       }
-      this.mongooseQuery = this.mongooseQuery.find(query);
+      this.mongooseQuery = this.mongooseQuery.find(query, (err, data) => {
+        if (err) {
+          res.send(err);
+        }
+      });
     }
     return this;
   }
