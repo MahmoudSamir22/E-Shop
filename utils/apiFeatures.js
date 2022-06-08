@@ -67,11 +67,7 @@ class ApiFeatures {
           },
         ];
       }
-      this.mongooseQuery = this.mongooseQuery.find(query, (err, data) => {
-        if (err) {
-          res.send(err);
-        }
-      });
+      this.mongooseQuery = this.mongooseQuery.find(query);
     }
     return this;
   }
