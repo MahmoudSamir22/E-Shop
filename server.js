@@ -10,6 +10,7 @@ const dbConnection = require("./db/dbConnection");
 const ApiError = require("./utils/apiErrors");
 const globalError = require("./middlewares/errorMiddleware");
 const mountRoutes = require('./Routes')
+const {webhookCheckOut} = require('./controllers/order.controller')
 
 const port = process.env.PORT || 3000;
 
@@ -22,6 +23,9 @@ app.options('*', cors())
 
 // compress all responses
 app.use(compression())
+
+//Check out web hook
+app.post('/webhook-checkout', express.raw({type: 'application/json'}), webhookCheckOut)
 
 
 app.use(express.json());
