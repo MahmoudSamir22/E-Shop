@@ -6,7 +6,7 @@ const jwt = require("jsonwebtoken");
 const ApiError = require("../utils/apiErrors");
 const bcrypt = require("bcryptjs");
 const sendEmail = require("../utils/sendEmail");
-
+const { sanitizeUser } = require('../utils/sanitizeData')
 const User = require("../models/user.model");
 
 const {generateToken} = require('../middlewares/generateToken')
@@ -21,7 +21,7 @@ exports.signUp = asyncHandler(async (req, res, next) => {
 
   //Create token
   const token = generateToken(user._id);
-  res.status(201).json({ data: user, token });
+  res.status(201).json({ data: sanitizeUser(user), token });
 });
 
 exports.logIn = asyncHandler(async (req, res, next) => {
