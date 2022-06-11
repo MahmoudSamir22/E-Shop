@@ -1,6 +1,14 @@
 const router = require("express").Router({ mergeParams: true });
 // const express = require("express");
-const subCategoryController = require("../controllers/subCategory.controller");
+const {
+  createCategoryId,
+  createFilterObject,
+  getSubCategories,
+  getSubCategory,
+  createSubCategory,
+  updateSubCategory,
+  deleteSubCategory,
+} = require("../controllers/subCategory.controller");
 const {
   createSubCategoryValidator,
   getSubCategoryValidator,
@@ -15,29 +23,29 @@ router
   .post(
     auth,
     allowedTo("admin", "manager"),
-    subCategoryController.createCategoryId,
+    createCategoryId,
     createSubCategoryValidator,
-    subCategoryController.createSubCategory
+    createSubCategory
   )
   .get(
-    subCategoryController.createFilterObject,
-    subCategoryController.getSubCategories
+    createFilterObject,
+    getSubCategories
   );
 
 router
   .route("/:id")
-  .get(getSubCategoryValidator, subCategoryController.getSubCategory)
+  .get(getSubCategoryValidator, getSubCategory)
   .put(
     auth,
     allowedTo("admin", "manager"),
     updateSubCategoryValidator,
-    subCategoryController.updateSubCategory
+    updateSubCategory
   )
   .delete(
     auth,
     allowedTo("admin"),
     deleteSubCategoryValidator,
-    subCategoryController.deleteSubCategory
+    deleteSubCategory
   );
 
 module.exports = router;
