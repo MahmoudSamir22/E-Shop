@@ -11,6 +11,9 @@ const User = require("../models/user.model");
 
 const {generateToken} = require('../middlewares/generateToken')
 
+// @desc SignUp new user
+// @route POST /api/v1/auth/signUp
+// @access Public
 exports.signUp = asyncHandler(async (req, res, next) => {
   // Create User
   const user = await User.create({
@@ -23,7 +26,9 @@ exports.signUp = asyncHandler(async (req, res, next) => {
   const token = generateToken(user._id);
   res.status(201).json({ data: sanitizeUser(user), token });
 });
-
+// @desc Login user
+// @route POST /api/v1/auth/login
+// @access Public
 exports.logIn = asyncHandler(async (req, res, next) => {
   const user = await User.findOne({ email: req.body.email });
   if (!user || !(await bcrypt.compare(req.body.password, user.password))) {
@@ -32,7 +37,9 @@ exports.logIn = asyncHandler(async (req, res, next) => {
   const token = generateToken(user._id);
   res.status(200).json({ data: user, token });
 });
-
+// @desc Check If user logged in
+// @route Middleware
+// @access Public
 exports.auth = asyncHandler(async (req, res, next) => {
   // 1) check if token exist, if exists hold it
   let token;
@@ -68,7 +75,9 @@ exports.auth = asyncHandler(async (req, res, next) => {
   req.user = currentUser;
   next();
 });
-
+// @desc Make routes secure for spesific role
+// @route Middleware
+// @access Public
 exports.allowedTo = (...roles) =>
   asyncHandler(async (req, res, next) => {
     if (!roles.includes(req.user.role)) {
@@ -78,7 +87,9 @@ exports.allowedTo = (...roles) =>
     }
     next();
   });
-
+// @desc Send email to user email with 6 random numbers
+// @route POST /api/v1/auth/forgetPassword
+// @access Public
 exports.forgetPassword = asyncHandler(async (req, res, next) => {
   // 1) get user by email
   const user = await User.findOne({ email: req.body.email });
@@ -120,7 +131,9 @@ exports.forgetPassword = asyncHandler(async (req, res, next) => {
     .status(200)
     .json({ status: "success", message: "Rest code sent to email" });
 });
-
+// @desc Verify reset code
+// @route POST /api/v1/auth/verifyResetCode
+// @access Public
 exports.verifyResetCode = asyncHandler(async (req, res, next) => {
   const hashedResetCode = crypto
     .createHash("sha256")
@@ -138,7 +151,9 @@ exports.verifyResetCode = asyncHandler(async (req, res, next) => {
   await user.save();
   res.status(200).json({ status: "success" });
 });
-
+// @desc Reset user password after verifying the reset code
+// @route PUT /api/v1/auth/resetPassword
+// @access Public
 exports.resetPassword = asyncHandler(async (req, res, next) => {
   const user = await User.findOne({ email: req.body.email });
   if (!user) {

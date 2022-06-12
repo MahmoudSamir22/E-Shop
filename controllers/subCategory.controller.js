@@ -37,5 +37,3 @@ exports.updateSubCategory = factory.updateOne(SubCategory);
 // @route DELETE /api/v1/categories
 // @access Private
 exports.deleteSubCategory = factory.deleteOne(SubCategory);
-
-module.exports = SubCategory;

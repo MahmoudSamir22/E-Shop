@@ -22,10 +22,5 @@ router.post("/verifyResetCode", verifyResetCode);
 
 router.put("/resetPassword", resetPassword);
 
-// router
-//   .route("/:id")
-//   .get(getUserValidator, getUser)
-//   .put(uploadUserImage, resizeImage, updateUserValidator, updateUser)
-//   .delete(deleteUserValidator, deleteUser);
 
 module.exports = router;

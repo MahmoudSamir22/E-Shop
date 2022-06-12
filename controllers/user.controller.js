@@ -35,15 +35,15 @@ exports.uploadUserImage = uploadSingleImage("profileImage");
 exports.getUsers = factory.getAll(User);
 // @desc Get Specific user by id
 // @route GET api/v1/users/:id
-// @access Private
+// @access Private/Admin
 exports.getUser = factory.getOne(User);
 // @desc Create a user
 // @route POST /api/v1/users
-// @access Private
+// @access Private/Admin
 exports.createUser = factory.createOne(User);
 // @desc Update a user
 // @route PUT /api/v1/users
-// @access Private
+// @access Private/Admin
 exports.updateUser = asyncHandler(async (req, res, next) => {
   const document = await User.findByIdAndUpdate(
     req.params.id,
@@ -124,7 +124,7 @@ exports.changeMyPassword = asyncHandler(async (req, res, next) => {
 });
 // @desc Update logged user
 // @route PUT /api/v1/users/updateMe
-// @access Private
+// @access Private/Admin
 exports.updateLoggedUser = asyncHandler(async (req, res, next) => {
   const user = await User.findByIdAndUpdate(
     req.user._id,
@@ -140,7 +140,7 @@ exports.updateLoggedUser = asyncHandler(async (req, res, next) => {
 
 // @desc Delete logged user
 // @route DELETE /api/v1/users/deleteMe
-// @access Private
+// @access Private/Admin
 exports.deleteLoggedUser = asyncHandler(async (req, res, next) => {
   const user = await User.findByIdAndUpdate(req.user._id, {active: false}, {new: true})
   res.status(200).json({data: user});

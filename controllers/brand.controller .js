@@ -33,13 +33,13 @@ exports.getBrands = factory.getAll(Brand);
 exports.getBrand = factory.getOne(Brand);
 // @desc Create a brand
 // @route POST /api/v1/brands
-// @access Private
+// @access Private/Admin/Manger
 exports.createBrand = factory.createOne(Brand);
 // @desc Update a Brand
 // @route PUT /api/v1/brands
-// @access Private
+// @access Private/Admin/Manger
 exports.updateBrand = factory.updateOne(Brand);
 // @desc Delete a Brand
 // @route DELETE /api/v1/brands
-// @access Private
+// @access Private/Admin/Manger
 exports.deleteBrand = factory.deleteOne(Brand);

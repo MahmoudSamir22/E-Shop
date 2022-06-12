@@ -3,6 +3,10 @@ const asyncHandler = require("express-async-handler");
 const ApiError = require("../utils/apiErrors");
 const User = require("../models/user.model");
 
+// @desc Add user address 
+// @route POST /api/v1/addresses
+// @access Private/User
+
 exports.addAddress = asyncHandler(async (req, res, next) => {
   const user = await User.findByIdAndUpdate(
     req.user._id,
@@ -18,6 +22,10 @@ exports.addAddress = asyncHandler(async (req, res, next) => {
   });
 });
 
+// @desc Remove user address 
+// @route DELETE /api/v1/addresses
+// @access Private/User
+
 exports.removeAddress = asyncHandler(async (req, res, next) => {
   const user = await User.findByIdAndUpdate(
     req.user._id,
@@ -32,6 +40,10 @@ exports.removeAddress = asyncHandler(async (req, res, next) => {
     data: user.addresses,
   });
 });
+
+// @desc Get user address 
+// @route GET /api/v1/addresses
+// @access Private/User
 
 exports.getLoggedUserAddresses = asyncHandler(async (req, res) => {
     const user = await User.findById(req.user._id).populate('addresses')

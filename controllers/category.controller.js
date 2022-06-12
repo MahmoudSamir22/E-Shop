@@ -35,13 +35,13 @@ exports.getCategories = factory.getAll(Category);
 exports.getCategory = factory.getOne(Category);
 // @desc Create a Category
 // @route POST /api/v1/categories
-// @access Private
+// @access Private/Admin/Manger
 exports.createCategory = factory.createOne(Category);
 // @desc Update a Category
 // @route PUT /api/v1/categories
-// @access Private
+// @access Private/Admin/Manger
 exports.updateCategory = factory.updateOne(Category);
 // @desc Delete a Category
 // @route DELETE /api/v1/categories
-// @access Private
+// @access Private/Admin/Manger
 exports.deleteCategory = factory.deleteOne(Category);
