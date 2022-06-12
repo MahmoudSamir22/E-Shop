@@ -25,7 +25,7 @@ const app = express();
 app.use(cors())
 app.options('*', cors())
 
-// compress all responses
+// compress all responses 
 app.use(compression())
 
 //Check out web hook
