@@ -3,7 +3,7 @@ const asyncHandler = require("express-async-handler");
 const ApiError = require("../utils/apiErrors");
 const User = require("../models/user.model");
 
-// @desc Add user address 
+// @desc Add user address
 // @route POST /api/v1/addresses
 // @access Private/User
 
@@ -22,7 +22,7 @@ exports.addAddress = asyncHandler(async (req, res, next) => {
   });
 });
 
-// @desc Remove user address 
+// @desc Remove user address
 // @route DELETE /api/v1/addresses
 // @access Private/User
 
@@ -30,7 +30,7 @@ exports.removeAddress = asyncHandler(async (req, res, next) => {
   const user = await User.findByIdAndUpdate(
     req.user._id,
     {
-      $pull: { addresses: {_id: req.params.addressId} },
+      $pull: { addresses: { _id: req.params.addressId } },
     },
     { new: true }
   );
@@ -41,15 +41,15 @@ exports.removeAddress = asyncHandler(async (req, res, next) => {
   });
 });
 
-// @desc Get user address 
+// @desc Get user address
 // @route GET /api/v1/addresses
 // @access Private/User
 
 exports.getLoggedUserAddresses = asyncHandler(async (req, res) => {
-    const user = await User.findById(req.user._id).populate('addresses')
-    res.status(200).json({
-        status: "success",
-        result: user.addresses.length,
-        data: user.addresses,
-      });
-})
+  const user = await User.findById(req.user._id).populate("addresses");
+  res.status(200).json({
+    status: "success",
+    result: user.addresses.length,
+    data: user.addresses,
+  });
+});
